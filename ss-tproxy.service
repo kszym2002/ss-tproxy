@@ -1,7 +1,7 @@
 [Unit]
 Description=ss-tproxy
 ConditionPathExists=/usr/local/bin/ss-tproxy
-After=systemd-networkd.service sshd.service network.service NetworkManager.service rsyslog.service
+After=network.service systemd-networkd.service NetworkManager.service sshd.service
 
 [Service]
 Type=forking
