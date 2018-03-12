@@ -169,19 +169,19 @@ function start() {
     if [ "${redir_no_delay}" = 'true' ]; then redir_params+=" --no-delay"; fi
     if [ "${redir_reuse_port}" = 'true' ]; then redir_params+=" --reuse-port"; fi
     if [ "${redir_fast_open}" = 'true' ]; then redir_params+=" --fast-open"; fi
-    nohup ss-redir "$redir_params" < /dev/null &>> ${redir_log} &
+    nohup ss-redir $redir_params < /dev/null &>> ${redir_log} &
 
     tunnel_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -b ${tunnel_addr} -l ${tunnel_port} -L ${tunnel_upstream}"
     if [ "${tunnel_udp_relay}" = 'true' ]; then tunnel_params+=" -u"; fi
     if [ "${tunnel_verbose}" = 'true' ]; then tunnel_params+=" -v"; fi
     if [ "${tunnel_no_delay}" = 'true' ]; then tunnel_params+=" --no-delay"; fi
     if [ "${tunnel_reuse_port}" = 'true' ]; then tunnel_params+=" --reuse-port"; fi
-    nohup ss-tunnel "$tunnel_params" < /dev/null &>> ${tunnel_log} &
+    nohup ss-tunnel $tunnel_params < /dev/null &>> ${tunnel_log} &
 
     chinadns_params="-b ${chinadns_addr} -p ${chinadns_port} -s ${chinadns_upstream} -c ${chinadns_chnroute}"
     if [ "${chinadns_mutation}" = 'true' ]; then chinadns_params+=" -m"; fi
     if [ "${chinadns_verbose}" = 'true' ]; then chinadns_params+=" -v"; fi
-    nohup chinadns "$chinadns_params" < /dev/null &>> "${chinadns_log}" &
+    nohup chinadns $chinadns_params < /dev/null &>> "${chinadns_log}" &
 
     dnsfwd_update
     dnsforwarder -d &> /dev/null
