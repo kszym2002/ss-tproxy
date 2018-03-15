@@ -41,10 +41,10 @@
 4. `ss-tproxy restart`，重启 ss-tproxy；
 5. `ss-tproxy current_ip`，获取当前 IP 地址信息；
 6. `ss-tproxy flush_dnsche`，清空 dnsforwarder dns缓存；
-7. `ss-tproxy update_chnip`，更新 ipset-chnip 大陆地址段；
+7. `ss-tproxy update_chnip`，更新 ipset-chnip 大陆地址段。
 
 ## ss-tproxy - 关于
 - author：Otokaze
 - url：https://www.zfl9.com
 - ref: https://www.zfl9.com/ss-redir.html
-- date: 2017-11-15 10:39:35 CST
+- date: 2018-03-15 09:25:21 CST

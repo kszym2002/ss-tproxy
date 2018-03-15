@@ -57,7 +57,7 @@ function chnip_update() {
     echo -n > ${chnip_txt}
     echo -n > ${chnip_sh}
 
-    curl -skL ${chnip_url} | egrep -v '^\s*$|^\s*#' > ${chnip_txt}
+    curl -4skL ${chnip_url} | egrep -v '^\s*$|^\s*#' > ${chnip_txt}
     for i in $(cat ${chnip_txt}); do echo "ipset -A chnip ${i}" >> ${chnip_sh}; done
 
     ipset -L chnip &> /dev/null
@@ -151,7 +151,7 @@ EOF
 }
 
 function current_ip() {
-    ip_info=$(curl -skL ip.chinaz.com/getip.aspx | sed -r "s/^\{ip:'(.*)',address:'(.*)'\}$/\1|\2/g")
+    ip_info=$(curl -4skL ip.chinaz.com/getip.aspx | sed -r "s/^\{ip:'(.*)',address:'(.*)'\}$/\1|\2/g")
     my_ip=$(echo ${ip_info} | awk -F'|' '{print $1}')
     my_loc=$(echo ${ip_info} | awk -F'|' '{print $2}')
     echo -e "\e[37mIP:\e[0m ${my_ip}\t\e[37m位置:\e[0m ${my_loc}"
