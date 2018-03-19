@@ -163,20 +163,34 @@ function start() {
         exit 1
     fi
 
-    redir_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -b ${redir_addr} -l ${redir_port}"
-    if [ "${redir_udp_relay}" = 'true' ]; then redir_params+=" -u"; fi
-    if [ "${redir_verbose}" = 'true' ]; then redir_params+=" -v"; fi
-    if [ "${redir_no_delay}" = 'true' ]; then redir_params+=" --no-delay"; fi
-    if [ "${redir_reuse_port}" = 'true' ]; then redir_params+=" --reuse-port"; fi
-    if [ "${redir_fast_open}" = 'true' ]; then redir_params+=" --fast-open"; fi
-    nohup ss-redir $redir_params < /dev/null &>> ${redir_log} &
+    if [ "${server_use_ssr}" = 'false' ]; then
+        redir_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -b ${redir_addr} -l ${redir_port}"
+        if [ "${redir_udp_relay}" = 'true' ]; then redir_params+=" -u"; fi
+        if [ "${redir_verbose}" = 'true' ]; then redir_params+=" -v"; fi
+        if [ "${redir_no_delay}" = 'true' ]; then redir_params+=" --no-delay"; fi
+        if [ "${redir_reuse_port}" = 'true' ]; then redir_params+=" --reuse-port"; fi
+        if [ "${redir_fast_open}" = 'true' ]; then redir_params+=" --fast-open"; fi
+        nohup ss-redir $redir_params < /dev/null &>> ${redir_log} &
+    else
+        redir_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -O ${server_protocol} -G ${server_protocol_param} -o ${server_obfs} -g ${server_obfs_param} -b ${redir_addr} -l ${redir_port}"
+        if [ "${redir_udp_relay}" = 'true' ]; then redir_params+=" -u"; fi
+        if [ "${redir_verbose}" = 'true' ]; then redir_params+=" -v"; fi
+        nohup ssr-redir $redir_params < /dev/null &>> ${redir_log} &
+    fi
 
-    tunnel_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -b ${tunnel_addr} -l ${tunnel_port} -L ${tunnel_upstream}"
-    if [ "${tunnel_udp_relay}" = 'true' ]; then tunnel_params+=" -u"; fi
-    if [ "${tunnel_verbose}" = 'true' ]; then tunnel_params+=" -v"; fi
-    if [ "${tunnel_no_delay}" = 'true' ]; then tunnel_params+=" --no-delay"; fi
-    if [ "${tunnel_reuse_port}" = 'true' ]; then tunnel_params+=" --reuse-port"; fi
-    nohup ss-tunnel $tunnel_params < /dev/null &>> ${tunnel_log} &
+    if [ "${server_use_ssr}" = 'false' ]; then
+        tunnel_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -b ${tunnel_addr} -l ${tunnel_port} -L ${tunnel_upstream}"
+        if [ "${tunnel_udp_relay}" = 'true' ]; then tunnel_params+=" -u"; fi
+        if [ "${tunnel_verbose}" = 'true' ]; then tunnel_params+=" -v"; fi
+        if [ "${tunnel_no_delay}" = 'true' ]; then tunnel_params+=" --no-delay"; fi
+        if [ "${tunnel_reuse_port}" = 'true' ]; then tunnel_params+=" --reuse-port"; fi
+        nohup ss-tunnel $tunnel_params < /dev/null &>> ${tunnel_log} &
+    else
+        tunnel_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -O ${server_protocol} -G ${server_protocol_param} -o ${server_obfs} -g ${server_obfs_param} -b ${tunnel_addr} -l ${tunnel_port} -L ${tunnel_upstream}"
+        if [ "${tunnel_udp_relay}" = 'true' ]; then tunnel_params+=" -u"; fi
+        if [ "${tunnel_verbose}" = 'true' ]; then tunnel_params+=" -v"; fi
+        nohup ssr-tunnel $tunnel_params < /dev/null &>> ${tunnel_log} &
+    fi
 
     chinadns_params="-b ${chinadns_addr} -p ${chinadns_port} -s ${chinadns_upstream} -c ${chinadns_chnroute}"
     if [ "${chinadns_mutation}" = 'true' ]; then chinadns_params+=" -m"; fi
@@ -202,6 +216,8 @@ function start() {
 function stop() {
     pgrep ss-redir | xargs kill -9 &> /dev/null
     pgrep ss-tunnel | xargs kill -9 &> /dev/null
+    pgrep ssr-redir | xargs kill -9 &> /dev/null
+    pgrep ssr-tunnel | xargs kill -9 &> /dev/null
     pgrep chinadns | xargs kill -9 &> /dev/null
     pgrep dnsforwarder | xargs kill -9 &> /dev/null
 
@@ -213,16 +229,32 @@ function stop() {
 }
 
 function status() {
-    if [ $(pgrep -c ss-redir) -ge 1 ]; then
-        echo -e "\e[37mss-redir\e[0m\t[\e[1;32mrunning\e[0m]"
+    if [ "${server_use_ssr}" = 'false' ]; then
+        if [ $(pgrep -c ss-redir) -ge 1 ]; then
+            echo -e "\e[37mss-redir\e[0m\t[\e[1;32mrunning\e[0m]"
+        else
+            echo -e "\e[37mss-redir\e[0m\t[\e[1;35mstopped\e[0m]"
+        fi
     else
-        echo -e "\e[37mss-redir\e[0m\t[\e[1;35mstopped\e[0m]"
+        if [ $(pgrep -c ssr-redir) -ge 1 ]; then
+            echo -e "\e[37mssr-redir\e[0m\t[\e[1;32mrunning\e[0m]"
+        else
+            echo -e "\e[37mssr-redir\e[0m\t[\e[1;35mstopped\e[0m]"
+        fi
     fi
 
-    if [ $(pgrep -c ss-tunnel) -ge 1 ]; then
-        echo -e "\e[37mss-tunnel\e[0m\t[\e[1;32mrunning\e[0m]"
+    if [ "${server_use_ssr}" = 'false' ]; then
+        if [ $(pgrep -c ss-tunnel) -ge 1 ]; then
+            echo -e "\e[37mss-tunnel\e[0m\t[\e[1;32mrunning\e[0m]"
+        else
+            echo -e "\e[37mss-tunnel\e[0m\t[\e[1;35mstopped\e[0m]"
+        fi
     else
-        echo -e "\e[37mss-tunnel\e[0m\t[\e[1;35mstopped\e[0m]"
+        if [ $(pgrep -c ssr-tunnel) -ge 1 ]; then
+            echo -e "\e[37mssr-tunnel\e[0m\t[\e[1;32mrunning\e[0m]"
+        else
+            echo -e "\e[37mssr-tunnel\e[0m\t[\e[1;35mstopped\e[0m]"
+        fi
     fi
 
     if [ $(pgrep -c chinadns) -ge 1 ]; then
