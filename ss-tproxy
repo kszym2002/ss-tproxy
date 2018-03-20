@@ -172,7 +172,9 @@ function start() {
         if [ "${redir_fast_open}" = 'true' ]; then redir_params+=" --fast-open"; fi
         nohup ss-redir $redir_params < /dev/null &>> ${redir_log} &
     else
-        redir_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -O ${server_protocol} -G ${server_protocol_param} -o ${server_obfs} -g ${server_obfs_param} -b ${redir_addr} -l ${redir_port}"
+        redir_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -O ${server_protocol} -o ${server_obfs} -b ${redir_addr} -l ${redir_port}"
+        if [ -n "${server_protocol_param}" ]; then redir_params+="-G ${server_protocol_param}"; fi
+        if [ -n "${server_obfs_param}" ]; then redir_params+="-g ${server_obfs_param}"; fi
         if [ "${redir_udp_relay}" = 'true' ]; then redir_params+=" -u"; fi
         if [ "${redir_verbose}" = 'true' ]; then redir_params+=" -v"; fi
         nohup ssr-redir $redir_params < /dev/null &>> ${redir_log} &
@@ -186,7 +188,9 @@ function start() {
         if [ "${tunnel_reuse_port}" = 'true' ]; then tunnel_params+=" --reuse-port"; fi
         nohup ss-tunnel $tunnel_params < /dev/null &>> ${tunnel_log} &
     else
-        tunnel_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -O ${server_protocol} -G ${server_protocol_param} -o ${server_obfs} -g ${server_obfs_param} -b ${tunnel_addr} -l ${tunnel_port} -L ${tunnel_upstream}"
+        tunnel_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -O ${server_protocol} -o ${server_obfs} -b ${tunnel_addr} -l ${tunnel_port} -L ${tunnel_upstream}"
+        if [ -n "${server_protocol_param}" ]; then tunnel_params+="-G ${server_protocol_param}"; fi
+        if [ -n "${server_obfs_param}" ]; then tunnel_params+="-g ${server_obfs_param}"; fi
         if [ "${tunnel_udp_relay}" = 'true' ]; then tunnel_params+=" -u"; fi
         if [ "${tunnel_verbose}" = 'true' ]; then tunnel_params+=" -v"; fi
         nohup ssr-tunnel $tunnel_params < /dev/null &>> ${tunnel_log} &
