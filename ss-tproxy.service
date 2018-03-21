@@ -1,7 +1,8 @@
 [Unit]
 Description=ss-tproxy
-ConditionPathExists=/usr/local/bin/ss-tproxy
-After=network.service systemd-networkd.service NetworkManager.service sshd.service
+ConditionFileIsExecutable=/usr/local/bin/ss-tproxy
+ConditionFileNotEmpty=/etc/ss-tproxy.conf
+After=network.target
 
 [Service]
 Type=forking
