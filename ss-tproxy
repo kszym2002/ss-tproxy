@@ -163,6 +163,8 @@ function start() {
         exit 1
     fi
 
+    dns_origin
+
     if [ "${server_use_ssr}" = 'false' ]; then
         redir_params="-s ${server_addr} -p ${server_port} -m ${server_method} -k ${server_passwd} -b ${redir_addr} -l ${redir_port}"
         if [ "${redir_udp_relay}" = 'true' ]; then redir_params+=" -u"; fi
