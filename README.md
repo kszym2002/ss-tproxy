@@ -23,7 +23,7 @@
 
 **内网主机的 DNS 必须指向网关，即 dnsforwarder，否则无法正常解析 DNS**。详见 [部署环境说明](https://www.zfl9.com/ss-redir.html#%E9%83%A8%E7%BD%B2%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E)
 
-**配置开机自启**
+**配置开机自启**<br>
 如果要配置开机自启，且 ss-tproxy.conf 中的 `server_addr` 为域名形式，**强烈建议**将其加入 `/etc/hosts` 文件中！特别是将 ss-tproxy 部署在路由上的，因为是 PPPOE 拨号方式，ss-tproxy 很有可能在 PPPOE 拨号未完成的情况下先启动，导致无法解析 `server_addr` 中的域名，进而导致 ss-redir/ss-tunnel/ssr-redir/ssr-tunnel 启动失败、iptables 规则配置失败等一系列问题。虽然可以通过 chkconfig 的优先级、systemd 的 Requires、After 字段来配置它们的启动顺序以及依赖关系，但是仍不可避免此问题（本人树莓派 3B 实测，踩了多次坑总结出来的经验）。
 
 `/etc/hosts` 的语法非常简单，比如 server_addr 的域名为 ss1.server.org，IP 地址为 1.2.3.4，只需将 `1.2.3.4 ss1.server.org` 行加入该文件尾部，文件中可以使用 `#` 进行注释，和 shell 脚本的注释语法类似。
