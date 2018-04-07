@@ -2,7 +2,8 @@
 Description=ss-tproxy
 ConditionFileIsExecutable=/usr/local/bin/ss-tproxy
 ConditionFileNotEmpty=/etc/ss-tproxy.conf
-After=network.target
+Requires=network-online.target haveged.service
+After=network-online.target haveged.service
 
 [Service]
 Type=forking
