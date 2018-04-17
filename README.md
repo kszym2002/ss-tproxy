@@ -21,7 +21,7 @@
 3. 如果你觉得使用 vim 修改略麻烦，也可以使用这里提供的 `ss-switch` 一键切换脚本（注意它会自动重启 ss-tproxy）
 4. 如果你使用此脚本可以正常 FQ，建议关闭 ss-redir、ss-tunnel、chinadns、dnsforwarder 的日志功能，具体可参考注释
 
-**内网主机的 DNS 必须指向网关，即 dnsforwarder，否则无法正常解析 DNS**。详见 [部署环境说明](https://www.zfl9.com/ss-redir.html#%E9%83%A8%E7%BD%B2%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E)
+~~**内网主机的 DNS 必须指向网关，即 dnsforwarder，否则无法正常解析 DNS**。详见 [部署环境说明](https://www.zfl9.com/ss-redir.html#%E9%83%A8%E7%BD%B2%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E)~~。新版本已使用 iptables 强制重定向至 dnsforwarder，无需关心内网主机 DNS 指向问题。内网主机的 DNS 可以指向任意 IP 地址（127.0.0.0/8 本机回环、192.168.x.x 等非网关的内网地址除外）。
 
 **配置开机自启**<br>
 如果要配置开机自启，且 ss-tproxy.conf 中的 `server_addr` 为域名形式，**强烈建议**将其加入 `/etc/hosts` 文件中！特别是将 ss-tproxy 部署在路由上的，因为是 PPPOE 拨号方式，ss-tproxy 很有可能在 PPPOE 拨号未完成的情况下先启动，导致无法解析 `server_addr` 中的域名，进而导致 ss-redir/ss-tunnel/ssr-redir/ssr-tunnel 启动失败、iptables 规则配置失败等一系列问题。虽然可以通过 chkconfig 的优先级、systemd 的 Requires、After 字段来配置它们的启动顺序以及依赖关系，但是仍不可避免此问题（本人树莓派 3B 实测，踩了多次坑总结出来的经验）。

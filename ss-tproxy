@@ -92,6 +92,7 @@ function ipts_update() {
     iptables -t mangle -A SS-UDP -m set --match-set chnip dst -j RETURN
     iptables -t mangle -A SS-UDP -p udp -j TPROXY --tproxy-mark ${iptables_tproxy_mark} --on-ip ${iptables_tproxy_ip} --on-port ${iptables_tproxy_port}
 
+    iptables -t mangle -A PREROUTING -p udp -s ${iptables_intranet} ! -d ${iptables_intranet} --dport 53 -j ACCEPT
     iptables -t mangle -A PREROUTING -p udp -s ${iptables_intranet} -j SS-UDP
 
     iptables -t nat -N SS-TCP
@@ -108,6 +109,7 @@ function ipts_update() {
     iptables -t nat -A SS-TCP -p tcp -j REDIRECT --to-ports ${redir_port}
 
     iptables -t nat -A OUTPUT -p tcp -j SS-TCP
+    iptables -t nat -A PREROUTING -p udp -s ${iptables_intranet} ! -d ${iptables_intranet} --dport 53 -j REDIRECT --to-ports 53
     iptables -t nat -A PREROUTING -p tcp -s ${iptables_intranet} -j SS-TCP
 
     iptables -t nat -A POSTROUTING -s ${iptables_intranet} ! -d ${iptables_intranet} -j MASQUERADE
@@ -118,6 +120,7 @@ function ipts_origin() {
     iptables -t nat -F
     iptables -t nat -X SS-TCP &> /dev/null
 
+    iptables -t nat -A PREROUTING -p udp -s ${iptables_intranet} -d ${iptables_intranet} --dport 53 -j DNAT --to-destination ${dns_original_1}
     iptables -t nat -A POSTROUTING -s ${iptables_intranet} ! -d ${iptables_intranet} -j MASQUERADE
 }
 
