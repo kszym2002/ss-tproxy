@@ -34,6 +34,7 @@ UseCache ${dnsforwarder_cache_on} # 启用缓存（文件缓存）
 MemoryCache ${dnsforwarder_cache_use_memory} # 不使用内存缓存
 CacheSize ${dnsforwarder_cache_size} # 缓存大小，不能小于 102400
 IgnoreTTL ${dnsforwarder_cache_ignore_ttl} # 忽略 TTL 值
+CacheControl iok.la nocache # 不缓存以 'iok.la' 结尾的域名
 ReloadCache ${dnsforwarder_cache_reload_on_start} # 启动时加载已有的文件缓存
 OverwriteCache ${dnsforwarder_cache_overwrite_when_reload_failed} # 当已有的文件缓存载入失败时，覆盖原文件
 EOF
@@ -50,15 +51,9 @@ function dnsfwd_flush() {
 }
 
 function chnip_update() {
-    chnip_url="http://f.ip.cn/rt/chnroutes.txt"
-    chnip_txt="/tmp/ss-tproxy_chnip.txt"
-    chnip_sh="/tmp/ss-tproxy_chnip.sh"
-
-    echo -n > ${chnip_txt}
-    echo -n > ${chnip_sh}
-
-    curl -4skL ${chnip_url} | egrep -v '^\s*$|^\s*#' > ${chnip_txt}
-    for i in $(cat ${chnip_txt}); do echo "ipset -A chnip ${i}" >> ${chnip_sh}; done
+    chnip_url="https://github.com/17mon/china_ip_list/raw/master/china_ip_list.txt"
+    echo -n > ${ipset_save_file}
+    curl -4sSkL ${chnip_url} | egrep -v '^\s*$|^\s*#' | xargs -n1 echo add chnip >> ${ipset_save_file}
 
     ipset -L chnip &> /dev/null
     if [ $? -ne 0 ]; then
@@ -67,10 +62,8 @@ function chnip_update() {
         ipset -F chnip &> /dev/null
     fi
 
-    bash ${chnip_sh}
+    ipset -R < ${ipset_save_file}
     ipset -S chnip > ${ipset_save_file}
-
-    rm -fr ${chnip_txt} ${chnip_sh}
 }
 
 function ipts_update() {
