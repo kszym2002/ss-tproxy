@@ -72,7 +72,7 @@ function ipts_update() {
     iptables -t mangle -X SS-UDP &> /dev/null
     iptables -t nat -F OUTPUT
     iptables -t nat -F PREROUTING
-	iptables -t nat -F POSTROUTING
+    iptables -t nat -F POSTROUTING
     iptables -t nat -F SS-TCP &> /dev/null
     iptables -t nat -X SS-TCP &> /dev/null
 
@@ -117,7 +117,7 @@ function ipts_origin() {
     iptables -t mangle -X SS-UDP &> /dev/null
     iptables -t nat -F OUTPUT
     iptables -t nat -F PREROUTING
-	iptables -t nat -F POSTROUTING
+    iptables -t nat -F POSTROUTING
     iptables -t nat -F SS-TCP &> /dev/null
     iptables -t nat -X SS-TCP &> /dev/null
 
