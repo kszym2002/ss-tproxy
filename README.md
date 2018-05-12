@@ -30,7 +30,8 @@
 
 **配置**
 - `vim /etc/tproxy/ss-tproxy.conf`
-- 修改开头的 `ss/ssr 配置`，具体可参考注释
+- 修改开头的 `ss/ssr 配置`，具体可参考文件注释
+- 如果觉得使用 vim 修改略麻烦，也可以使用 `ss-switch` 切换脚本
 
 **自启**（Systemd）
 - `cp -af ss-tproxy.service /etc/systemd/system/`
