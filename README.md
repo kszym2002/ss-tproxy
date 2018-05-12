@@ -4,7 +4,7 @@
 - iptables + [ipset](https://www.zfl9.com/ss-redir.html#ipset) 工具
 - curl 用于获取大陆地址段列表
 - [haveged](https://www.zfl9.com/ss-redir.html#haveged) 解决系统熵过低的问题（可选，但建议）
-- [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)（[安装参考](https://www.zfl9.com/ss-redir.html#shadowsocks-libev)） 或 [shadowsocksr-libev](https://github.com/shadowsocksr-backup/shadowsocksr-libev)（[安装参考](https://www.zfl9.com/ss-redir.html#shadowsocksr-libev)）
+- [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)（[安装参考](https://www.zfl9.com/ss-redir.html#shadowsocks-libev)）或 [shadowsocksr-libev](https://github.com/shadowsocksr-backup/shadowsocksr-libev)（[安装参考](https://www.zfl9.com/ss-redir.html#shadowsocksr-libev)）
 - [chinadns](https://github.com/shadowsocks/ChinaDNS)，自带 `x86`、`x64`、`arm`、`arm64` 可执行文件（[安装参考](https://www.zfl9.com/ss-redir.html#chinadns)）
 - [dnsforwarder](https://github.com/holmium/dnsforwarder)，自带 `x86`、`x64`、`arm`、`arm64` 可执行文件（[安装参考](https://www.zfl9.com/ss-redir.html#dnsforwarder)）
 
@@ -31,14 +31,14 @@
 - 修改开头的 `ss/ssr 配置`，具体可参考注释
 
 **自启**（Systemd）
-- `cp -af ss-tun2socks.service /etc/systemd/system/`
+- `cp -af ss-tproxy.service /etc/systemd/system/`
 - `systemctl daemon-reload`
-- `systemctl enable ss-tun2socks.service`
+- `systemctl enable ss-tproxy.service`
 
 **自启**（SysVinit）
 - `touch /etc/rc.d/rc.local`
 - `chmod +x /etc/rc.d/rc.local`
-- `echo "/usr/local/bin/ss-tun2socks start" >> /etc/rc.d/rc.local`
+- `echo "/usr/local/bin/ss-tproxy start" >> /etc/rc.d/rc.local`
 
 > 配置 ss-tproxy 开机自启后容易出现一个问题，那就是必须再次运行 `ss-tproxy restart` 后才能正常代理（这之前查看运行状态，可能看不出任何问题，都是 running 状态），这是因为 ss-tproxy 启动过早了，且 server_addr 为 Hostname，且没有将 server_addr 中的 Hostname 加入 /etc/hosts 文件而导致的。因为 ss-tproxy 启动时，网络还没准备好，此时根本无法解析这个 Hostname。要避免这个问题，可以采取一个非常简单的方法，那就是将 Hostname 加入到 /etc/hosts 中，如 Hostname 为 node.proxy.net，对应的 IP 为 11.22.33.44，则只需执行 `echo "11.22.33.44 node.proxy.net" >> /etc/hosts`。不过得注意个问题，那就是假如这个 IP 变了，别忘了修改 /etc/hosts 文件哦。
 
@@ -53,8 +53,8 @@
 - `ss-tproxy update_chnip`：更新大陆地址段列表（ipset、chinadns）
 
 ## 相关参考
-- [shadowsocks/ChinaDNS](https://github.com/shadowsocks/ChinaDNS)
 - [holmium/dnsforwarder](https://github.com/holmium/dnsforwarder)
+- [shadowsocks/ChinaDNS](https://github.com/shadowsocks/ChinaDNS)
 - [shadowsocks/shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)
 - [shadowsocksr-backup/shadowsocksr-libev](https://github.com/shadowsocksr-backup/shadowsocksr-libev)
 - 感谢以上开发者的无私贡献，让我们能够畅游互联网！
