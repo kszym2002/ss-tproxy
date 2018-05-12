@@ -15,9 +15,11 @@
 **安装**
 - `cd ss-tproxy/`
 - `cp -af ss-tproxy /usr/local/bin/`
+- `cp -af ss-switch /usr/local/bin/`
 - `cp -af chinadns/chinadns.ARCH /usr/local/bin/chinadns`（注意 ARCH）
 - `cp -af dnsforwarder/dnsforwarder.ARCH /usr/local/bin/dnsforwarder`（注意 ARCH）
 - `chmod 0755 /usr/local/bin/ss-tproxy`
+- `chmod 0755 /usr/local/bin/ss-switch`
 - `chmod 0755 /usr/local/bin/chinadns`
 - `chmod 0755 /usr/local/bin/dnsforwarder`
 - `mkdir -p /etc/tproxy/`
