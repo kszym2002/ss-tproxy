@@ -1,6 +1,6 @@
 #!/bin/bash
 
-main_cfg='/etc/ss-tproxy.conf'
+main_cfg='/etc/tproxy/ss-tproxy.conf'
 
 function usage() {
 {

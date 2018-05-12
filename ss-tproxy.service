@@ -1,7 +1,7 @@
 [Unit]
 Description=ss-tproxy
 ConditionFileIsExecutable=/usr/local/bin/ss-tproxy
-ConditionFileNotEmpty=/etc/ss-tproxy.conf
+ConditionFileNotEmpty=/etc/tproxy/ss-tproxy.conf
 Requires=network-online.target haveged.service
 After=network-online.target haveged.service
 
