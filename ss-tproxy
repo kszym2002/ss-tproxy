@@ -86,7 +86,7 @@ function ipts_update() {
     iptables -t mangle -A SS-UDP -d 224/4 -j RETURN
     iptables -t mangle -A SS-UDP -d 240/4 -j RETURN
     iptables -t mangle -A SS-UDP -d ${server_addr} -j RETURN
-    iptables -t mangle -A SS-UDP -m set --match-set chnroute dst -j RETURN
+    iptables -t mangle -A SS-UDP -m geoip --dst-cc CN -j RETURN
     iptables -t mangle -A SS-UDP -p udp -j TPROXY --tproxy-mark ${iptables_tproxy_mark} --on-ip ${iptables_tproxy_ip} --on-port ${iptables_tproxy_port}
 
     iptables -t mangle -A PREROUTING -p udp -s ${iptables_intranet} ! -d ${iptables_intranet} --dport 53 -j ACCEPT
@@ -102,7 +102,7 @@ function ipts_update() {
     iptables -t nat -A SS-TCP -d 224/4 -j RETURN
     iptables -t nat -A SS-TCP -d 240/4 -j RETURN
     iptables -t nat -A SS-TCP -d ${server_addr} -j RETURN
-    iptables -t nat -A SS-TCP -m set --match-set chnroute dst -j RETURN
+    iptables -t nat -A SS-TCP -m geoip --dst-cc CN -j RETURN
     iptables -t nat -A SS-TCP -p tcp -j REDIRECT --to-ports ${redir_port}
 
     iptables -t nat -A OUTPUT -p tcp -j SS-TCP
