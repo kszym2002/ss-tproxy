@@ -1,7 +1,7 @@
 # ss-redir 透明代理
 ## 脚本依赖
 - iproute2 工具
-- iptables + [geoip](https://linux.cn/article-6885-1.html#geoip) + [ipset] (https://www.zfl9.com/ss-redir.html#ipset) 工具
+- iptables + [geoip](https://linux.cn/article-6885-1.html#geoip) + [ipset](https://www.zfl9.com/ss-redir.html#ipset) 工具
 - curl 用于获取大陆地址段列表
 - [haveged](https://www.zfl9.com/ss-redir.html#haveged) 解决系统熵过低的问题（可选，但建议）
 - [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)（[安装参考](https://www.zfl9.com/ss-redir.html#shadowsocks-libev)）或 [shadowsocksr-libev](https://github.com/shadowsocksr-backup/shadowsocksr-libev)（[安装参考](https://www.zfl9.com/ss-redir.html#shadowsocksr-libev)）
